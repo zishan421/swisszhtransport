@@ -10,6 +10,9 @@ import {
 } from "../config.js";
 import { useState } from "react";
 import Reveal from "./shared/Reveal.jsx";
+import GlideSelect from "./shared/GlideSelect.jsx";
+import RubberSegment from "./shared/RubberSegment.jsx";
+import BorderGlow from "./shared/BorderGlow.jsx";
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete.js";
 import { useDrivingDistance } from "../hooks/useDrivingDistance.js";
 
@@ -23,6 +26,11 @@ const bookingHours = [
   "9h",
   "10h",
 ];
+const bookingHourOptions = bookingHours.map((hour, index) => ({
+  value: hour,
+  label: hour,
+  tag: index === 0 ? "Minimum" : "Hourly",
+}));
 
 // Services that need an hours selector
 const hourlyServices = ["Book per hour", "Wedding"];
@@ -166,23 +174,25 @@ export default function JourneyPlanner({ openBooking }) {
         <div className="journey-box">
           <div className="journey-top">
             <span className="journey-title">Where can we take you?</span>
-            <div
-              className="service-switch"
-              role="group"
-              aria-label="Choose your booking type"
-            >
-              {services.map((service) => (
-                <button
-                  key={service}
-                  aria-pressed={rideType === service}
-                  className={rideType === service ? "active" : ""}
-                  onClick={() => changeService(service)}
-                  type="button"
-                >
-                  {service}
-                </button>
-              ))}
-            </div>
+            <RubberSegment
+              className="journey-service-segment"
+              items={services}
+              value={rideType}
+              onChange={(value) => changeService(value)}
+              trackColor="rgba(196, 202, 194, 0.46)"
+              thumbColor="rgba(255, 255, 255, 0.74)"
+              textColor="#7b817b"
+              activeTextColor="#252c28"
+              size="md"
+              radius={9}
+              inset={3}
+              equalSlots
+              stretch={100}
+              squash={3}
+              speed={1}
+              glide={75}
+              draggable
+            />
           </div>
 
           <form
@@ -207,17 +217,23 @@ export default function JourneyPlanner({ openBooking }) {
                 <span className="field-label">HOURS</span>
                 <div className="field-inline">
                   <span className="field-icon">◔</span>
-                  <select
-                    aria-label="Hours"
+                  <GlideSelect
+                    options={bookingHourOptions}
                     value={hours}
-                    onChange={(e) => setHours(e.target.value)}
-                  >
-                    {bookingHours.map((h) => (
-                      <option key={h} value={h}>
-                        {h}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => setHours(value)}
+                    aria-label="Hours"
+                    showTags
+                    accentColor="#bd3832"
+                    surfaceColor="rgba(255, 255, 255, 0.72)"
+                    highlightColor="rgba(235, 237, 232, 0.96)"
+                    textColor="#2a312c"
+                    variant="light"
+                    size="md"
+                    radius={8}
+                    menuWidth={150}
+                    placement="bottom"
+                    align="left"
+                  />
                 </div>
               </label>
             )}
@@ -318,9 +334,22 @@ export default function JourneyPlanner({ openBooking }) {
               </div>
             )}
 
-            <button className="button next-button" type="submit">
-              NEXT
-            </button>
+            <BorderGlow
+              className="next-button-glow"
+              edgeSensitivity={30}
+              glowColor="40 80 80"
+              backgroundColor="#120F17"
+              borderRadius={28}
+              glowRadius={40}
+              glowIntensity={1}
+              coneSpread={25}
+              animated={false}
+              colors={["#c084fc", "#f472b6", "#38bdf8"]}
+            >
+              <button className="button next-button" type="submit">
+                NEXT
+              </button>
+            </BorderGlow>
             {formError && (
               <p className="form-error quick-distance-badge" role="alert">
                 {formError}

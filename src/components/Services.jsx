@@ -1,6 +1,8 @@
 import { Plane, BriefcaseBusiness, CarFront, ArrowUpRight } from "lucide-react";
 import Reveal from "./shared/Reveal.jsx";
 import Label from "./shared/Label.jsx";
+import TiltedCard from "./shared/TiltedCard.jsx";
+import SpotlightCard from "./shared/SpotlightCard.jsx";
 
 const serviceItems = [
   {
@@ -51,30 +53,34 @@ export default function Services({ openBooking }) {
           {serviceItems.map(
             ({ number, title, icon: Icon, subtitle, copy, detail }, i) => (
               <Reveal delay={i * 0.1} key={title}>
-                <button
-                  className="service-card"
-                  onClick={() =>
-                    openBooking({
-                      service:
-                        title === "Limousine" ? "Book per hour" : "Book per km",
-                    })
-                  }
-                >
-                  <div className="service-card-top">
-                    <Icon size={28} strokeWidth={1.2} />
-                    <span>{number}</span>
-                  </div>
-                  <span className="service-detail">{detail}</span>
-                  <h3>{title}</h3>
-                  <p className="service-subtitle">{subtitle}</p>
-                  <p>{copy}</p>
-                  <div className="service-card-bottom">
-                    <span>Explore your journey</span>
-                    <span className="circle-arrow">
-                      <ArrowUpRight size={21} />
-                    </span>
-                  </div>
-                </button>
+                <TiltedCard rotateAmplitude={7} scaleOnHover={1.02}>
+                  <SpotlightCard
+                    as="button"
+                    type="button"
+                    className="service-card"
+                    onClick={() =>
+                      openBooking({
+                        service:
+                          title === "Limousine" ? "Book per hour" : "Book per km",
+                      })
+                    }
+                  >
+                    <div className="service-card-top">
+                      <Icon size={28} strokeWidth={1.2} />
+                      <span>{number}</span>
+                    </div>
+                    <span className="service-detail">{detail}</span>
+                    <h3>{title}</h3>
+                    <p className="service-subtitle">{subtitle}</p>
+                    <p>{copy}</p>
+                    <div className="service-card-bottom">
+                      <span>Explore your journey</span>
+                      <span className="circle-arrow">
+                        <ArrowUpRight size={21} />
+                      </span>
+                    </div>
+                  </SpotlightCard>
+                </TiltedCard>
               </Reveal>
             ),
           )}

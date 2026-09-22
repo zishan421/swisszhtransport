@@ -3,6 +3,7 @@ import { Phone, ArrowUpRight, X, Menu } from "lucide-react";
 import { business } from "../config.js";
 import { useState, useEffect } from "react";
 import Brand from "./shared/Brand.jsx";
+import SpecularButton from "./SpecularButton.jsx";
 
 export default function Navbar({ onBook, bookingOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,12 +37,28 @@ export default function Navbar({ onBook, bookingOpen }) {
             <Phone size={14} />
             <span>{business.phone}</span>
           </a>
-          <button
-            className="button button-dark nav-book"
+          <SpecularButton
+            className="nav-book"
+            size="lg"
+            radius={14}
+            tint="#ffffff"
+            tintOpacity={0}
+            blur={0}
+            textColor="#f5f5f5"
+            lineColor="#ffffff"
+            baseColor="#525252"
+            intensity={1}
+            shineSize={10}
+            shineFade={40}
+            thickness={1}
+            speed={0.35}
+            followMouse
+            proximity={250}
+            autoAnimate={false}
             onClick={() => openBooking()}
           >
             Book your journey <ArrowUpRight size={16} />
-          </button>
+          </SpecularButton>
           <button
             className="menu-button"
             aria-label={menuOpen ? "Close menu" : "Open menu"}

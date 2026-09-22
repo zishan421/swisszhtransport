@@ -1,0 +1,94 @@
+.specular-button {
+  --specular-highlight: color-mix(in srgb, var(--specular-tint) 26%, transparent);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: var(--specular-thickness) solid var(--specular-line) !important;
+  border-radius: var(--specular-radius) !important;
+  background: var(--specular-base) !important;
+  color: var(--specular-text) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+    0 8px 24px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.specular-button__surface {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at var(--specular-x) var(--specular-y),
+      rgba(255, 255, 255, calc(var(--specular-opacity) * 0.34)) 0%,
+      rgba(255, 255, 255, calc(var(--specular-opacity) * 0.16)) var(--specular-shine-size),
+      transparent var(--specular-shine-fade)
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--specular-tint) 16%, var(--specular-base)) 0%,
+      var(--specular-base) 48%,
+      color-mix(in srgb, var(--specular-tint) 9%, var(--specular-base)) 100%
+    );
+  filter: blur(var(--specular-blur));
+  opacity: calc(0.72 + var(--specular-tint-opacity) * 0.28);
+  transition: background var(--specular-speed) ease, opacity var(--specular-speed) ease;
+}
+
+.specular-button__surface::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 24%,
+    rgba(255, 255, 255, 0.12) 46%,
+    rgba(255, 255, 255, 0.34) 50%,
+    rgba(255, 255, 255, 0.08) 54%,
+    transparent 76%
+  );
+  opacity: var(--specular-opacity);
+  transform: translateX(-115%);
+  transition: opacity var(--specular-speed) ease;
+}
+
+.specular-button__content {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+}
+
+.specular-button[data-auto-animate="true"] .specular-button__surface::after {
+  animation: specular-button-sweep var(--specular-speed) ease-in-out infinite alternate;
+}
+
+.specular-button:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+    0 12px 28px rgba(0, 0, 0, 0.26);
+}
+
+@keyframes specular-button-sweep {
+  to {
+    transform: translateX(115%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specular-button,
+  .specular-button__surface,
+  .specular-button__surface::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

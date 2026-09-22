@@ -8,6 +8,7 @@ import {
 import { useRef } from "react";
 import Label from "./shared/Label.jsx";
 import { ease } from "../lib/animation.js";
+import SpecularButton from "./SpecularButton.jsx";
 
 export default function Banner({ openBooking }) {
   const hero = useRef(null);
@@ -105,9 +106,27 @@ export default function Banner({ openBooking }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.8 }}
         >
-          <button className="button button-light" onClick={() => openBooking()}>
+          <SpecularButton
+            size="lg"
+            radius={14}
+            tint="#ffffff"
+            tintOpacity={0}
+            blur={0}
+            textColor="#f5f5f5"
+            lineColor="#ffffff"
+            baseColor="#525252"
+            intensity={1}
+            shineSize={10}
+            shineFade={40}
+            thickness={1}
+            speed={0.35}
+            followMouse
+            proximity={250}
+            autoAnimate={false}
+            onClick={() => openBooking()}
+          >
             Find your journey <ArrowUpRight size={19} />
-          </button>
+          </SpecularButton>
         </motion.div>
       </div>
       <div className="hero-caption">

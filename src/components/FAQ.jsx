@@ -59,8 +59,18 @@ export default function FAQ() {
       <div className="faq-list">
         {faqItems.map(([question, answer], i) => (
           <Reveal key={question} delay={i * 0.04}>
-            <div className={`faq-item ${activeFaq === i ? "is-open" : ""}`}>
+            <div
+              className={`faq-item ${activeFaq === i ? "is-open" : ""}`}
+              onPointerMove={(event) => {
+                if (event.pointerType !== "mouse") return;
+                const card = event.currentTarget;
+                const bounds = card.getBoundingClientRect();
+                card.style.setProperty("--faq-glass-x", `${event.clientX - bounds.left}px`);
+                card.style.setProperty("--faq-glass-y", `${event.clientY - bounds.top}px`);
+              }}
+            >
               <button
+                className="faq-question"
                 aria-expanded={activeFaq === i}
                 aria-controls={`answer-${i}`}
                 id={`question-${i}`}

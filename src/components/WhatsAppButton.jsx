@@ -1,9 +1,13 @@
 import { MessageCircle } from "lucide-react";
 import { business } from "../config.js";
+import SpecularButton from "./SpecularButton.jsx";
 
 export default function WhatsAppButton() {
   return (
-    <a
+    <SpecularButton
+      as="a"
+      size="lg"
+      radius={14}
       className="floating-whatsapp"
       href={`https://wa.me/${business.whatsapp}`}
       target="_blank"
@@ -12,6 +16,6 @@ export default function WhatsAppButton() {
     >
       <MessageCircle size={23} />
       <span>Let’s talk</span>
-    </a>
+    </SpecularButton>
   );
 }
