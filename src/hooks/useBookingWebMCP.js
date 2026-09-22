@@ -26,7 +26,9 @@ export default function useBookingWebMCP(openBooking) {
                 Object.keys(input).some((k) => k !== "service") ||
                 (input.service && !services.includes(input.service))
               )
-                throw new Error("Choose Airport Services, Limousine or Taxi.");
+                throw new Error(
+                  "Choose a booking service from the available options.",
+                );
               openBooking(input.service ? { service: input.service } : {});
               await new Promise((resolve) =>
                 requestAnimationFrame(() => requestAnimationFrame(resolve)),

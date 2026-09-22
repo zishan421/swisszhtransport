@@ -53,7 +53,12 @@ export default function Services({ openBooking }) {
               <Reveal delay={i * 0.1} key={title}>
                 <button
                   className="service-card"
-                  onClick={() => openBooking({ service: title })}
+                  onClick={() =>
+                    openBooking({
+                      service:
+                        title === "Limousine" ? "Book per hour" : "Book per km",
+                    })
+                  }
                 >
                   <div className="service-card-top">
                     <Icon size={28} strokeWidth={1.2} />

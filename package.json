@@ -11,6 +11,7 @@
     "format": "prettier --write src tests index.html vite.config.js"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.468.0",
     "motion": "^12.23.0",
     "react": "^19.1.0",

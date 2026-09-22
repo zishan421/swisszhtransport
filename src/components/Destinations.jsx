@@ -29,7 +29,7 @@ export default function Destinations({ openBooking }) {
           </p>
           <button
             className="button button-light"
-            onClick={() => openBooking({ service: "Taxi" })}
+            onClick={() => openBooking({ service: "Book per km" })}
           >
             Let’s go somewhere <ArrowUpRight size={18} />
           </button>
@@ -42,7 +42,7 @@ export default function Destinations({ openBooking }) {
                 openBooking({
                   pickup: "Zurich",
                   destination: city === "Zurich" ? "Zurich Airport" : city,
-                  service: "Taxi",
+                  service: "Book per km",
                 })
               }
             >

@@ -28,11 +28,13 @@ export default function Vehicle({ openBooking }) {
           <br />
           <em>More possibility.</em>
         </h2>
-        <h3>Mercedes-Benz V-Class <span className="vehicle-model-year">2023</span></h3>
+        <h3>
+          Mercedes-Benz V-Class <span className="vehicle-model-year">2023</span>
+        </h3>
         <p>
-          A refined presence. A spacious interior. Our 2023 V-Class brings a little
-          calm to busy days, with room for shared journeys and the things you
-          take along.
+          A refined presence. A spacious interior. Our 2023 V-Class brings a
+          little calm to busy days, with room for shared journeys and the things
+          you take along.
         </p>
         <div className="vehicle-features">
           <div>
@@ -56,7 +58,7 @@ export default function Vehicle({ openBooking }) {
           className="button button-dark"
           onClick={() =>
             openBooking({
-              service: "Limousine",
+              service: "Book per hour",
               notes: "I would like to request the Mercedes-Benz V-Class 2023.",
             })
           }

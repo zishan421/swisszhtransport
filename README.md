@@ -56,7 +56,15 @@ Navigation, FAQ, journey form and banner animation state live in their respectiv
 
 ## Inquiry flow
 
-Services: **Limousine, Taxi, Airport Services**. Visitors enter pickup, destination, date, Switzerland-local time, passenger count and name, review their details, then choose WhatsApp or email. This opens their messaging app with a prepared inquiry; the visitor still sends the message. No inquiry is silently sent, no payment is taken and no automatic reservation is promised.
+Booking types: **Book per hour, Book per km, Book per day, Outside Switzerland, Wedding**. Visitors enter pickup, destination, date, Switzerland-local time, passenger count and name, review their details, then choose WhatsApp or email. This opens their messaging app with a prepared inquiry; the visitor still sends the message. No inquiry is silently sent, no payment is taken and no automatic reservation is promised.
+
+Rates are centralised in `src/config.js`: hourly and wedding bookings require at least 3 hours at CHF 120/hour and CHF 150/hour respectively, CHF 5/km, Zurich Airport to Zurich city at CHF 120 and Zurich city to Zurich Airport at CHF 95, CHF 990 for a 10-hour day inside Switzerland including 220 km plus CHF 4/km for extra distance, CHF 1400 for a 10-hour day outside Switzerland including 300 km with driver confirmation required for extra distance. Missing route distances do not produce default fares.
+
+## Google Maps setup
+
+Set `VITE_GOOGLE_MAPS_API_KEY` in the ignored `.env` file to a valid Google Maps browser API key. Enable billing, Maps JavaScript API, Places API (New), and Routes API for its Cloud project. Restrict the key to the intended website and development origins and the required APIs. Restart Vite after environment changes; production builds must be rebuilt to pick up a changed key.
+
+Pickup and destination fields use dropdown autocomplete. When Google search is unavailable, the site's original popular Swiss locations remain available as clearly labelled local shortcuts; they are not labelled as Google results. Road distance is fetched from Google's Routes library, with support for existing Distance Matrix API accounts. Per-km fares use the returned distance, the Switzerland day package adds CHF 4/km above 220 km, and Outside Switzerland uses a 300 km included-distance threshold. Route errors do not substitute a straight-line or hardcoded distance. A placeholder API key cannot return live suggestions or routes.
 
 **Advance policy:** a 20% advance payment of the agreed total fare is required to confirm a booking; the remaining balance is 80%. This is shown in the journey planner, inquiry form, review step and FAQs. The inquiry asks for the total fare and payment arrangements. The percentage lives in `bookingPolicy` in `src/config.js`.
 
@@ -64,7 +72,7 @@ Online payment collection is not connected yet: the pricing flow and payment pro
 
 WhatsApp: **+41 78 906 42 40**. Email: **jamaluddin174@yahoo.com**.
 
-There is no database, payment system, live dispatch, route-price calculator, or availability backend. Passenger counts are requests, not a promise of vehicle capacity. Confirm vehicle configuration and commercial content before public launch. English copy is original; no competitor prices or reviews are reused.
+There is no database, payment system, live dispatch, or availability backend. Passenger counts are requests, not a promise of vehicle capacity. Confirm vehicle configuration and commercial content before public launch. English copy is original; no competitor prices or reviews are reused.
 
 The optional browser WebMCP `start_journey_inquiry` tool opens the same visible form, without sending or confirming a booking. Unsupported browsers use the ordinary UI.
 

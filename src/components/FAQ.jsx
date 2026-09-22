@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import { bookingPolicy, business } from "../config.js";
+import { bookingPolicy, bookingRates, business } from "../config.js";
 import Reveal from "./shared/Reveal.jsx";
 import Label from "./shared/Label.jsx";
 
@@ -16,7 +16,7 @@ const faqItems = [
   ],
   [
     "Can you pick me up at Zurich Airport?",
-    "Yes. Select Airport Services and include your flight number, arrival date and destination. We will arrange the pickup details with you when confirming your journey.",
+    "Yes. Choose Book per km and include your flight number, arrival date and destination. We will arrange the pickup details with you when confirming your journey.",
   ],
   [
     "Can I request the Mercedes-Benz V-Class 2023?",
@@ -28,7 +28,7 @@ const faqItems = [
   ],
   [
     "How much will my journey cost?",
-    "Your quote depends on the route, time, service and any special requirements. Contact us with your journey details for a personalised price before confirming.",
+    `Hourly and wedding bookings require at least ${bookingRates.minimumBookingHours} hours at CHF ${bookingRates.perHour}/hr and CHF ${bookingRates.weddingPerHour}/hr respectively. Distance: CHF ${bookingRates.perKm}/km, with Zurich Airport to Zurich city fixed at CHF ${bookingRates.zurichAirportToCity} and Zurich city to Zurich Airport at CHF ${bookingRates.zurichCityToAirport}. A ${bookingRates.perDayHours}-hour day inside Switzerland costs CHF ${bookingRates.perDay}, including ${bookingRates.insideSwitzerlandMaxKm} km; extra distance is CHF ${bookingRates.perDayExtraKm}/km. Outside Switzerland: CHF ${bookingRates.outsideSwitzerlandPerDay} per ${bookingRates.perDayHours}-hour day including ${bookingRates.outsideSwitzerlandIncludedKm} km; longer routes require driver confirmation and an additional charge.`,
   ],
 ];
 export default function FAQ() {
