@@ -232,6 +232,52 @@ p {
 .button:active {
   transform: scale(0.98);
 }
+.button,
+.next-button,
+.vehicle-option-button,
+.gold-payment-btn,
+.payment-place-order {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  will-change: transform;
+}
+.button::after,
+.next-button::after,
+.vehicle-option-button::after,
+.gold-payment-btn::after,
+.payment-place-order::after {
+  content: "";
+  position: absolute;
+  inset: -70% auto -70% -24%;
+  width: 18%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.42),
+    transparent
+  );
+  transform: translateX(-180%) rotate(18deg);
+  pointer-events: none;
+  z-index: -1;
+}
+@media (hover: hover) {
+  .button:not(:disabled):hover,
+  .next-button:not(:disabled):hover,
+  .vehicle-option-button:not(:disabled):hover,
+  .gold-payment-btn:not(:disabled):hover,
+  .payment-place-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(24, 31, 27, 0.16);
+  }
+  .button:not(:disabled):hover::after,
+  .next-button:not(:disabled):hover::after,
+  .vehicle-option-button:not(:disabled):hover::after,
+  .gold-payment-btn:not(:disabled):hover::after,
+  .payment-place-order:hover::after {
+    animation: sheen-sweep 0.8s var(--ease) both;
+  }
+}
 .button-dark {
   background: #232926;
   color: white;
@@ -527,9 +573,25 @@ p {
   scroll-margin-top: 135px;
 }
 .journey-box {
+  position: relative;
+  isolation: isolate;
   background: #fff;
+  border: 1px solid rgba(32, 37, 35, 0.06);
+  border-radius: 2px;
   padding: 24px 30px 30px;
-  box-shadow: 0 14px 50px #18231c0b;
+  box-shadow: 0 18px 55px rgba(24, 35, 28, 0.1), 0 2px 8px rgba(24, 35, 28, 0.04);
+}
+.journey-box::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  animation: luxury-line 5s ease-in-out infinite;
+  pointer-events: none;
 }
 .journey-top {
   display: flex;
@@ -555,14 +617,16 @@ p {
   background: transparent;
   border: 0;
   color: #767b75;
-  transition: all 0.25s;
+  transition: all 0.3s var(--ease);
 }
 .service-switch button.active {
   background: #f0f0eb;
   color: #222;
+  box-shadow: 0 5px 14px rgba(32, 37, 35, 0.08);
 }
 .service-switch button:hover {
   color: var(--red);
+  transform: translateY(-2px);
 }
 .journey-rate-strip {
   display: flex;
@@ -606,6 +670,11 @@ p {
   gap: 12px;
   border-right: 1px solid #e3e4dd;
   min-height: 62px;
+  transition: border-color 0.3s ease, transform 0.3s var(--ease);
+}
+.quick-book label:focus-within {
+  border-right-color: var(--red);
+  transform: translateY(-2px);
 }
 .quick-book label > svg {
   color: #6d766d;
@@ -848,7 +917,9 @@ p {
 }
 .services-section {
   padding: 88px 0 96px;
-  background: #eaece5;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.8), transparent 28%),
+    linear-gradient(135deg, #eaece5, #e5e9e0 56%, #eef0ea);
 }
 .section-heading {
   display: flex;
@@ -893,6 +964,7 @@ p {
   background: #26372e;
   color: white;
   transform: translateY(-7px);
+  box-shadow: 0 18px 38px rgba(25, 42, 32, 0.18);
 }
 .service-card-top {
   display: flex;
@@ -959,6 +1031,18 @@ p {
   background: #ffffff16;
   transform: rotate(45deg);
 }
+.service-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.service-card:hover::after {
+  opacity: 1;
+}
 .vehicle-section {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -971,6 +1055,7 @@ p {
   position: relative;
   overflow: hidden;
   background: #d2d8cf;
+  box-shadow: 0 20px 45px rgba(31, 43, 35, 0.15);
 }
 .vehicle-photo img {
   height: 100%;
@@ -1017,14 +1102,17 @@ p {
   border: 1px solid var(--line);
   font-size: 13px;
   text-align: left;
-  transition: border-color 0.3s, background 0.3s;
+  transition: border-color 0.3s, background 0.3s, transform 0.35s var(--ease), box-shadow 0.35s ease;
 }
 .vehicle-gallery-options button.is-active {
   border-color: #64725f;
   background: #eaece5;
+  box-shadow: inset 0 0 0 1px rgba(100, 123, 103, 0.2);
 }
 .vehicle-gallery-options button:hover {
   border-color: var(--red);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(32, 37, 35, 0.1);
 }
 .vehicle-gallery-options img {
   width: 64px;
@@ -1187,6 +1275,7 @@ p {
 .details-section {
   padding-block: 95px;
   border-bottom: 1px solid var(--line);
+  background: radial-gradient(circle at 92% 18%, rgba(216, 223, 210, 0.42), transparent 32%);
 }
 .details-section h2 {
   margin-top: 20px;
@@ -1246,6 +1335,14 @@ p {
 .faq-item > button svg {
   flex-shrink: 0;
   color: #7c8673;
+  transition: transform 0.35s var(--ease), color 0.25s ease;
+}
+.faq-item > button:hover {
+  color: var(--red);
+}
+.faq-item > button:hover svg {
+  color: var(--red);
+  transform: translateX(3px);
 }
 .faq-item > div {
   overflow: hidden;
@@ -1258,7 +1355,9 @@ p {
 }
 .contact-section {
   padding: 75px 0 45px;
-  background: #26372e;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(210, 184, 105, 0.16), transparent 28%),
+    linear-gradient(135deg, #26372e, #1e2e27 68%, #18261f);
   color: #f6f5ee;
 }
 .contact-top {
@@ -1372,13 +1471,15 @@ p {
   border: 1px solid #a7b39c55;
   border-radius: 30px;
   padding: 13px 17px;
-  transition: transform 0.3s;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s ease;
+  animation: whatsapp-pulse 4s ease-in-out infinite;
 }
 .floating-whatsapp > span {
   font-size: 11px;
 }
 .floating-whatsapp:hover {
   transform: translateY(-4px);
+  animation-play-state: paused;
 }
 .booking-dialog {
   position: fixed;
@@ -1742,6 +1843,34 @@ p {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+@keyframes whatsapp-pulse {
+  0%,
+  100% {
+    box-shadow: 0 3px 20px #0002, 0 0 0 0 rgba(38, 55, 46, 0.28);
+  }
+  50% {
+    box-shadow: 0 8px 28px #0003, 0 0 0 8px rgba(38, 55, 46, 0);
+  }
+}
+@keyframes sheen-sweep {
+  from {
+    transform: translateX(-180%) rotate(18deg);
+  }
+  to {
+    transform: translateX(520%) rotate(18deg);
+  }
+}
+@keyframes luxury-line {
+  0%,
+  100% {
+    transform: scaleX(0.72);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
   }
 }
 @media (min-width: 1600px) {
@@ -2632,11 +2761,13 @@ p {
 .luxury-flow-dialog {
   max-width: 1120px !important;
   width: min(1120px, calc(100% - 24px)) !important;
-  background: #0e1114 !important;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(238, 202, 118, 0.08), transparent 28%),
+    linear-gradient(135deg, #0e1114, #121619 58%, #0b0e10) !important;
   color: #f5f4ef !important;
   border-radius: 20px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(238, 202, 118, 0.04) !important;
 }
 
 .luxury-dialog-inner {
@@ -2645,9 +2776,20 @@ p {
 
 /* Stepper Header */
 .luxury-stepper-header {
+  position: relative;
   margin-bottom: 28px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.luxury-stepper-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 24%;
+  height: 1px;
+  background: linear-gradient(90deg, #eeca76, transparent);
+  opacity: 0.8;
 }
 
 .stepper-brand {
@@ -3544,6 +3686,10 @@ p {
 }
 
 @media (max-width: 560px) {
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
   .phone-input-group {
     grid-template-columns: 1fr;
   }
