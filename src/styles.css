@@ -2240,6 +2240,8 @@ p {
   position: absolute;
   right: 18px;
   top: 18px;
+  z-index: 100;
+  pointer-events: auto;
   padding: 8px;
   border: 0;
   background: transparent;

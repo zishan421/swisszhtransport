@@ -33,7 +33,7 @@ import {
   swissDateTime,
   bookingRates,
 } from "../config.js";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Label from "./shared/Label.jsx";
 import AdvanceNotice from "./AdvanceNotice.jsx";
 import { useDrivingDistance } from "../hooks/useDrivingDistance.js";
@@ -116,6 +116,16 @@ export default function BookingDialog({ open, onClose, initial }) {
   };
 
   const quote = calculateVehicleQuote(bookingData);
+
+  const handleClose = useCallback(
+    (event) => {
+      event?.preventDefault();
+      event?.stopPropagation();
+      ref.current?.close();
+      onClose();
+    },
+    [onClose],
+  );
 
   useEffect(() => {
     if (!open) {
@@ -296,15 +306,15 @@ export default function BookingDialog({ open, onClose, initial }) {
 
   const links = quote.error ? {} : inquiryLinks(bookingData);
 
-  return (
+  return open ? (
     <dialog
       ref={ref}
       className={`booking-dialog luxury-flow-dialog ${
         step !== "plan" ? "review-mode" : ""
       }`}
-      onCancel={onClose}
+      onCancel={handleClose}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleClose(e);
       }}
       aria-label={isAirportTransfer ? "Zurich Airport transfer booking" : "Journey booking"}
     >
@@ -314,9 +324,11 @@ export default function BookingDialog({ open, onClose, initial }) {
         }`}
       >
         <button
+          type="button"
           className="close-button"
           aria-label="Close booking inquiry"
-          onClick={onClose}
+          onPointerDown={handleClose}
+          onClick={handleClose}
         >
           <X size={22} />
         </button>
@@ -1295,5 +1307,5 @@ export default function BookingDialog({ open, onClose, initial }) {
         )}
       </div>
     </dialog>
-  );
+  ) : null;
 }
