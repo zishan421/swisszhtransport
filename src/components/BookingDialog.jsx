@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import {
   services,
+  driverLanguages,
   validateJourney,
   inquiryLinks,
   localDate,
@@ -53,6 +54,7 @@ export default function BookingDialog({ open, onClose, initial }) {
   const ref = useRef(null);
   const [data, setData] = useState({
     service: services[0],
+    driverLanguage: "English",
     pickup: "",
     destination: "",
     date: "",
@@ -134,6 +136,7 @@ export default function BookingDialog({ open, onClose, initial }) {
     }
     const merged = {
       service: services[0],
+      driverLanguage: "English",
       airportTransfer: false,
       airportDirection: "to-airport",
       pickup: "",
@@ -762,6 +765,22 @@ export default function BookingDialog({ open, onClose, initial }) {
                     </div>
                   </div>
                 </div>
+
+                <label className="driver-language-field">
+                  <span>Driver language</span>
+                  <select
+                    name="driverLanguage"
+                    value={data.driverLanguage}
+                    onChange={update}
+                    required
+                  >
+                    {driverLanguages.map((language) => (
+                      <option key={language} value={language}>
+                        {language}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
               {/* Section 2: Options */}
@@ -1012,6 +1031,10 @@ export default function BookingDialog({ open, onClose, initial }) {
                 <div className="spec-item">
                   <span>Vehicle:</span>
                   <strong>Mercedes-Benz V-Class (2023)</strong>
+                </div>
+                <div className="spec-item">
+                  <span>Driver language:</span>
+                  <strong>{data.driverLanguage}</strong>
                 </div>
                 <div className="spec-item">
                   <span>Guests & Luggage:</span>

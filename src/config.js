@@ -11,6 +11,7 @@ export const services = [
   "Outside Switzerland",
   "Wedding",
 ];
+export const driverLanguages = ["Hindi", "English", "German", "Urdu", "Bangla"];
 export const bookingRates = {
   perHour: 120,
   perDay: 990,
@@ -307,7 +308,7 @@ export function buildInquiry(data) {
     .filter(Boolean)
     .join("\n");
 
-  return `Hello Swiss ZH Transport, I would like to request a journey.\n\nService: ${data.service}\nPickup: ${data.pickup.trim()}\nDestination: ${data.destination.trim()}\nDate: ${data.date}\nTime: ${data.time} (Switzerland local time)\nPassengers: ${data.passengers}\nFare: CHF ${formatFare(quote.total)} (${quote.breakdown})\nName: ${fullName}${data.notes?.trim() ? `\nNotes / flight number: ${data.notes.trim()}` : ""}${extraDetails ? `\n${extraDetails}` : ""}\n\nPlease confirm availability, the total fare and how to pay the required ${bookingPolicy.advancePercent}% advance to confirm my booking. Thank you.`;
+  return `Hello Swiss ZH Transport, I would like to request a journey.\n\nService: ${data.service}\nDriver language: ${data.driverLanguage || "English"}\nPickup: ${data.pickup.trim()}\nDestination: ${data.destination.trim()}\nDate: ${data.date}\nTime: ${data.time} (Switzerland local time)\nPassengers: ${data.passengers}\nFare: CHF ${formatFare(quote.total)} (${quote.breakdown})\nName: ${fullName}${data.notes?.trim() ? `\nNotes / flight number: ${data.notes.trim()}` : ""}${extraDetails ? `\n${extraDetails}` : ""}\n\nPlease confirm availability, the total fare and how to pay the required ${bookingPolicy.advancePercent}% advance to confirm my booking. Thank you.`;
 }
 export function inquiryLinks(data) {
   const body = encodeURIComponent(buildInquiry(data));

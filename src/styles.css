@@ -4005,6 +4005,30 @@ p {
   gap: 14px;
 }
 
+.driver-language-field {
+  display: grid;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+}
+.driver-language-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: #14171a;
+  color: #f5f4ef;
+  font-size: 13px;
+  outline: none;
+}
+.driver-language-field select:focus {
+  border-color: #eeca76;
+  background: #191d21;
+  box-shadow: 0 0 0 2px rgba(238, 202, 118, 0.15);
+}
+
 .section-block-title {
   margin: 0 0 4px;
   font-size: 16px;
