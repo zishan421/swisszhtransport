@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Loader } from "lucide-react";
 import { normalizePredictions } from "../../lib/locationSuggestions.js";
 
@@ -17,6 +17,18 @@ export default function LocationInput({
   const [activeIndex, setActiveIndex] = useState(-1);
   const safePredictions = normalizePredictions(predictions);
   const listId = useId();
+  const fieldRef = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const closeOutside = (event) => {
+      if (!fieldRef.current?.contains(event.target)) {
+        setOpen(false);
+        setActiveIndex(-1);
+      }
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, [open]);
   const choose = (prediction) => {
     onSelect(prediction.description, prediction);
     setOpen(false);
@@ -24,12 +36,22 @@ export default function LocationInput({
   };
 
   return (
-    <label className="location-field">
+    <div
+      ref={fieldRef}
+      className={`location-field${open ? " is-open" : ""}`}
+      onBlur={(event) => {
+        if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) {
+          setOpen(false);
+          setActiveIndex(-1);
+        }
+      }}
+    >
       <MapPin size={18} />
       <span>
-        {label}
+        <span id={`${listId}-label`}>{label}</span>
         <input
           aria-label={label}
+          aria-labelledby={`${listId}-label`}
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={open && safePredictions.length > 0}
@@ -71,7 +93,6 @@ export default function LocationInput({
           }}
           onClick={() => setOpen(true)}
           onFocus={() => setOpen(true)}
-          onBlur={() => window.setTimeout(() => setOpen(false), 200)}
           maxLength={200}
           autoComplete="off"
           required={required}
@@ -130,6 +151,6 @@ export default function LocationInput({
             </div>
           )}
       </span>
-    </label>
+    </div>
   );
 }

@@ -12,6 +12,7 @@ import { useState } from "react";
 import Reveal from "./shared/Reveal.jsx";
 import GlideSelect from "./shared/GlideSelect.jsx";
 import RubberSegment from "./shared/RubberSegment.jsx";
+import FolderFloat from "./shared/FolderFloat.jsx";
 import BorderGlow from "./shared/BorderGlow.jsx";
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete.js";
 import { useDrivingDistance } from "../hooks/useDrivingDistance.js";
@@ -193,6 +194,30 @@ export default function JourneyPlanner({ openBooking }) {
               glide={75}
               draggable
             />
+            <div className="journey-mobile-services">
+              <FolderFloat
+                className="journey-service-folder"
+                items={services}
+                label={rideType}
+                sublabel="Tap to choose your service"
+                trigger="click"
+                closeOnSelect
+                physics={false}
+                onSelect={changeService}
+                selectedValue={rideType}
+                folderColor="#202523"
+                frontColor="#3c433f"
+                paperColor="#f5f4ef"
+                itemColor="#f5f4ef"
+                itemTextColor="#202523"
+                labelColor="#f5f4ef"
+                width={200}
+                height={112}
+                tilt={0}
+                restAngle={10}
+                flapAngle={28}
+              />
+            </div>
           </div>
 
           <form
