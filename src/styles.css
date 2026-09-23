@@ -1271,6 +1271,97 @@ p {
 .location-field.is-open {
   z-index: 40;
 }
+.location-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.location-input-row input {
+  flex: 1;
+  min-width: 0;
+}
+.current-location-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(100, 114, 95, 0.28);
+  border-radius: 50%;
+  background: rgba(232, 236, 228, 0.72);
+  color: #64725f;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.current-location-button:hover:not(:disabled),
+.current-location-button:focus-visible {
+  background: #64725f;
+  color: #fff;
+  transform: translateY(-1px);
+}
+.current-location-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.location-current-error {
+  display: block;
+  margin-top: 5px;
+  color: var(--red);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+.booking-form .airport-transfer-options h2 {
+  margin: 0 0 16px;
+  font-size: clamp(24px, 5vw, 32px);
+}
+.airport-direction-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid #dfe2da;
+  border-radius: 12px;
+  background: #f2f3ee;
+}
+.airport-direction-switch button {
+  min-height: 48px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #505b52;
+}
+.airport-direction-switch button[aria-pressed="true"] {
+  background: #fff;
+  color: #a6322d;
+  border-color: #e8c6c1;
+  box-shadow: 0 2px 8px rgba(32, 37, 35, 0.06);
+}
+.airport-transfer-options p {
+  margin-top: 12px;
+  color: #bfc7bc;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.airport-fare-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f5f4ef;
+  color: #202523;
+  font-size: 13px;
+}
+.airport-fare-preview strong { font-size: 22px; }
+.airport-fare-preview button { color: var(--red); text-decoration: underline; }
+.location-field input[readonly] { color: #657061; cursor: default; }
 .map-attribution {
   display: block;
   margin-top: 12px;
@@ -1811,8 +1902,11 @@ p {
   margin-bottom: 30px;
 }
 .destination-list {
-  min-width: 220px;
+  min-width: min(100%, 430px);
   flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
 }
 .destination-list button {
   display: flex;

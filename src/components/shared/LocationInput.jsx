@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { MapPin, Loader } from "lucide-react";
+import { LocateFixed, MapPin, Loader } from "lucide-react";
 import { normalizePredictions } from "../../lib/locationSuggestions.js";
 
 export default function LocationInput({
@@ -12,6 +12,10 @@ export default function LocationInput({
   error,
   empty,
   required = false,
+  readOnly = false,
+  onUseCurrentLocation,
+  locationLoading = false,
+  locationError = "",
 }) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -49,10 +53,11 @@ export default function LocationInput({
       <MapPin size={18} />
       <span>
         <span id={`${listId}-label`}>{label}</span>
-        <input
+        <div className="location-input-row">
+          <input
           aria-label={label}
           aria-labelledby={`${listId}-label`}
-          role="combobox"
+          role={readOnly ? undefined : "combobox"}
           aria-autocomplete="list"
           aria-expanded={open && safePredictions.length > 0}
           aria-controls={listId}
@@ -91,12 +96,27 @@ export default function LocationInput({
               choose(safePredictions[activeIndex]);
             }
           }}
-          onClick={() => setOpen(true)}
-          onFocus={() => setOpen(true)}
+          onClick={() => !readOnly && setOpen(true)}
+          onFocus={() => !readOnly && setOpen(true)}
           maxLength={200}
           autoComplete="off"
           required={required}
-        />
+          readOnly={readOnly}
+          />
+          {onUseCurrentLocation && !readOnly && (
+            <button
+              type="button"
+              className="current-location-button"
+              onClick={onUseCurrentLocation}
+              disabled={locationLoading}
+              aria-label="Use my current location as pickup"
+              title="Use my current location"
+            >
+              {locationLoading ? <Loader size={15} className="spin" /> : <LocateFixed size={15} />}
+            </button>
+          )}
+        </div>
+        {locationError && <span className="location-current-error" role="alert">{locationError}</span>}
         {open && safePredictions.length > 0 && (
           <div className="location-dropdown" role="listbox" id={listId}>
             {safePredictions.map((p, index) => (

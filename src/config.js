@@ -123,21 +123,46 @@ function isZurichAirport(location) {
   );
 }
 
-function isZurichCity(location) {
-  return location.includes("zurich") && !isZurichAirport(location);
+function isZurichCity(data, field) {
+  if (isZurichAirport(locationText(data, field))) return false;
+  const place = data[`${field}Place`];
+  if (place?.municipality) {
+    return /^(zurich|zuerich|stadt zurich)$/.test(
+      normalizedLocationText(place.municipality).trim(),
+    );
+  }
+  // Do not mistake a canton or a business name for the municipality.
+  if (place?.source === "osm") return false;
+  const firstPart = normalizedLocationText(place?.description || data[field])
+    .split(",")[0].trim();
+  return /^(zurich|zuerich)( city| hb)?$/.test(firstPart);
+}
+
+export function validateAirportTransfer(data) {
+  if (!data.airportTransfer) return "";
+  const pickupAirport = data.pickupPlace?.place_id === "ch-zurich-airport";
+  const destinationAirport = data.destinationPlace?.place_id === "ch-zurich-airport";
+  if (data.service !== "Book per km" || pickupAirport === destinationAirport) {
+    return "Choose a transfer to or from Zurich Airport.";
+  }
+  const otherPlace = pickupAirport ? data.destinationPlace : data.pickupPlace;
+  if (!otherPlace || otherPlace.countryCode !== "CH") {
+    return "Choose a location in Switzerland from the suggestions.";
+  }
+  return "";
 }
 
 function getZurichAirportFixedFare(data) {
   const pickup = locationText(data, "pickup");
   const destination = locationText(data, "destination");
-  if (isZurichAirport(pickup) && isZurichCity(destination)) {
+  if (isZurichAirport(pickup) && isZurichCity(data, "destination")) {
     return {
       total: bookingRates.zurichAirportToCity,
       label: "Zurich Airport to Zurich city",
       breakdown: `Fixed transfer · CHF ${bookingRates.zurichAirportToCity}`,
     };
   }
-  if (isZurichCity(pickup) && isZurichAirport(destination)) {
+  if (isZurichCity(data, "pickup") && isZurichAirport(destination)) {
     return {
       total: bookingRates.zurichCityToAirport,
       label: "Zurich city to Zurich Airport",
@@ -156,6 +181,8 @@ export function calculateVehicleQuote(data = {}) {
     breakdown: "",
     error,
   });
+  const airportError = validateAirportTransfer(data);
+  if (airportError) return invalid(airportError);
   if (service === "Book per hour" || service === "Wedding") {
     const hours = positiveAmount(data.hours, "hours");
     if (!hours) return invalid("Please enter a valid number of hours.");

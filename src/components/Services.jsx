@@ -3,6 +3,7 @@ import Reveal from "./shared/Reveal.jsx";
 import Label from "./shared/Label.jsx";
 import TiltedCard from "./shared/TiltedCard.jsx";
 import SpotlightCard from "./shared/SpotlightCard.jsx";
+import { airportTransferPreset } from "../lib/airportTransfers.js";
 
 const serviceItems = [
   {
@@ -59,10 +60,11 @@ export default function Services({ openBooking }) {
                     type="button"
                     className="service-card"
                     onClick={() =>
-                      openBooking({
-                        service:
-                          title === "Limousine" ? "Book per hour" : "Book per km",
-                      })
+                      openBooking(
+                        title === "Airport Services"
+                          ? airportTransferPreset()
+                          : { service: "Book per hour" },
+                      )
                     }
                   >
                     <div className="service-card-top">

@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Reveal from "./shared/Reveal.jsx";
 import Label from "./shared/Label.jsx";
+import { featuredDestinations } from "../lib/locationSuggestions.js";
 
 export default function Destinations({ openBooking }) {
   return (
@@ -35,19 +36,19 @@ export default function Destinations({ openBooking }) {
           </button>
         </Reveal>
         <div className="destination-list">
-          {["Zurich", "Lucerne", "Interlaken", "St. Moritz"].map((city, i) => (
+          {featuredDestinations.map((place, i) => (
             <button
-              key={city}
+              key={place.place_id}
               onClick={() =>
                 openBooking({
-                  pickup: "Zurich",
-                  destination: city === "Zurich" ? "Zurich Airport" : city,
+                  destination: place.description,
+                  destinationPlace: place,
                   service: "Book per km",
                 })
               }
             >
-              <span>0{i + 1}</span>
-              {city}
+              <span>{String(i + 1).padStart(2, "0")}</span>
+              {place.structured_formatting?.main_text ?? place.description}
               <ArrowUpRight size={17} />
             </button>
           ))}

@@ -45,6 +45,43 @@ export function validCoordinates(coordinates) {
   );
 }
 
+export function getCurrentLocationPlace({
+  timeout = 12000,
+  maximumAge = 60000,
+} = {}) {
+  if (typeof navigator === "undefined" || !navigator.geolocation) {
+    return Promise.reject(new Error("Location tracking is not available in this browser."));
+  }
+
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const longitude = Number(coords.longitude.toFixed(6));
+        const latitude = Number(coords.latitude.toFixed(6));
+        resolve({
+          place_id: `current-${longitude}-${latitude}`,
+          description: `Current location (${latitude}, ${longitude})`,
+          coordinates: [longitude, latitude],
+          countryCode: "",
+          source: "geolocation",
+          structured_formatting: {
+            main_text: "Current location",
+            secondary_text: `${latitude}, ${longitude}`,
+          },
+        });
+      },
+      (error) => {
+        const message =
+          error.code === 1
+            ? "Please allow location access to use your current position."
+            : "We could not read your current location. Try again or search for a pickup place.";
+        reject(new Error(message));
+      },
+      { enableHighAccuracy: true, timeout, maximumAge },
+    );
+  });
+}
+
 export function photonLocations(data, europeMode = false) {
   const unique = new Map();
   for (const feature of data.features || []) {
@@ -79,6 +116,7 @@ export function photonLocations(data, europeMode = false) {
       description,
       coordinates,
       countryCode: p.countrycode?.toUpperCase(),
+      municipality: p.city || p.town || p.village || "",
       source: "osm",
       structured_formatting: {
         main_text: main,

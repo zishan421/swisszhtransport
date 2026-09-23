@@ -30,6 +30,8 @@ import {
   bookingPolicy,
   calculateVehicleQuote,
   formatFare,
+  swissDateTime,
+  bookingRates,
 } from "../config.js";
 import { useRef, useState, useEffect } from "react";
 import Label from "./shared/Label.jsx";
@@ -39,6 +41,8 @@ import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete.js";
 import LocationInput from "./shared/LocationInput.jsx";
 import RouteMap from "./shared/RouteMap.jsx";
 import Brand from "./shared/Brand.jsx";
+import { airportTransferPreset } from "../lib/airportTransfers.js";
+import { getCurrentLocationPlace } from "../lib/openMaps.js";
 import {
   countryCodes,
   findCountryCodeByDialCode,
@@ -79,9 +83,14 @@ export default function BookingDialog({ open, onClose, initial }) {
   const [phoneCountryOpen, setPhoneCountryOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [error, setError] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const selectedPhoneCountry = findCountryCodeByIso(data.phoneCountry);
 
   const isEurope = data.service === "Outside Switzerland";
+  const isAirportTransfer = Boolean(data.airportTransfer);
+  const airportAtPickup = isAirportTransfer && data.airportDirection === "from-airport";
+  const airportAtDestination = isAirportTransfer && !airportAtPickup;
 
   const pickupPredictions = usePlacesAutocomplete(
     data.pickup,
@@ -115,6 +124,8 @@ export default function BookingDialog({ open, onClose, initial }) {
     }
     const merged = {
       service: services[0],
+      airportTransfer: false,
+      airportDirection: "to-airport",
       pickup: "",
       destination: "",
       date: "",
@@ -145,6 +156,7 @@ export default function BookingDialog({ open, onClose, initial }) {
     merged.phoneCode = phoneCountry.code;
     setData((prev) => ({ ...prev, ...merged }));
     setError("");
+    setLocationError("");
     setVehicleSelected(false);
     setPhoneCountryOpen(false);
     setPaymentMethod("cash");
@@ -193,6 +205,26 @@ export default function BookingDialog({ open, onClose, initial }) {
         : {}),
     }));
     setError("");
+    if (name === "pickup") setLocationError("");
+  };
+
+  const useCurrentPickup = async () => {
+    setLocationLoading(true);
+    setLocationError("");
+    try {
+      const place = await getCurrentLocationPlace();
+      setData((prev) => ({
+        ...prev,
+        pickup: place.description,
+        pickupPlace: place,
+        distance: "",
+      }));
+      setError("");
+    } catch (locationIssue) {
+      setLocationError(locationIssue.message);
+    } finally {
+      setLocationLoading(false);
+    }
   };
 
   const choosePhoneCountry = (iso) => {
@@ -262,7 +294,7 @@ export default function BookingDialog({ open, onClose, initial }) {
     ref.current?.scrollTo(0, 0);
   };
 
-  const links = inquiryLinks(bookingData);
+  const links = quote.error ? {} : inquiryLinks(bookingData);
 
   return (
     <dialog
@@ -274,7 +306,7 @@ export default function BookingDialog({ open, onClose, initial }) {
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      aria-labelledby="booking-title"
+      aria-label={isAirportTransfer ? "Zurich Airport transfer booking" : "Journey booking"}
     >
       <div
         className={`dialog-inner luxury-dialog-inner ${
@@ -1119,11 +1151,45 @@ export default function BookingDialog({ open, onClose, initial }) {
                 );
                 return;
               }
+              if (data.service === "Book per km" && !route.distanceKm) {
+                setError(route.loading ? "Please wait for the route calculation." : route.error || "Choose a valid driving route.");
+                return;
+              }
+              if (quote.error) {
+                setError(quote.error);
+                return;
+              }
+              if (`${data.date}T${data.time}` <= swissDateTime()) {
+                setError("Choose a future pickup date and time (Switzerland local time).");
+                return;
+              }
+              setData((prev) => ({ ...prev, distance: String(route.distanceKm ?? prev.distance) }));
               setError("");
               setStep("vehicles");
             }}
           >
-            <label className="full">
+            {isAirportTransfer ? (
+              <div className="airport-transfer-options full">
+                <h2 id="booking-title">Zurich Airport transfer</h2>
+                <div className="airport-direction-switch" role="group" aria-label="Airport transfer direction">
+                  {[["to-airport", "To Zurich Airport"], ["from-airport", "From Zurich Airport"]].map(([direction, label]) => (
+                    <button
+                      type="button"
+                      key={direction}
+                      aria-pressed={data.airportDirection === direction}
+                      onClick={() => {
+                        if (direction === data.airportDirection) return;
+                        const otherPlace = airportAtPickup ? data.destinationPlace : data.pickupPlace;
+                        setData((prev) => ({ ...prev, ...airportTransferPreset(direction, otherPlace) }));
+                        setError("");
+                        setVehicleSelected(false);
+                      }}
+                    >{label}</button>
+                  ))}
+                </div>
+                <p>Zurich city → airport: CHF {bookingRates.zurichCityToAirport}. Airport → Zurich city: CHF {bookingRates.zurichAirportToCity}. Elsewhere in Switzerland: CHF {bookingRates.perKm}/km.</p>
+              </div>
+            ) : <label className="full">
               Service
               <select name="service" value={data.service} onChange={update}>
                 {services.map((s) => (
@@ -1132,11 +1198,12 @@ export default function BookingDialog({ open, onClose, initial }) {
                   </option>
                 ))}
               </select>
-            </label>
+            </label>}
 
             <LocationInput
               label={isEurope ? "Pickup location (Europe)" : "Pickup location"}
               value={data.pickup}
+              readOnly={airportAtPickup}
               required
               onChange={(value) =>
                 update({ target: { name: "pickup", value } })
@@ -1146,18 +1213,24 @@ export default function BookingDialog({ open, onClose, initial }) {
                   ...prev,
                   pickup: value,
                   pickupPlace: place,
+                  distance: "",
                 }));
                 setError("");
+                setLocationError("");
               }}
               predictions={pickupPredictions.predictions}
               loading={pickupPredictions.loading}
               error={pickupPredictions.error}
               empty={pickupPredictions.empty}
+              onUseCurrentLocation={useCurrentPickup}
+              locationLoading={locationLoading}
+              locationError={locationError}
             />
 
             <LocationInput
               label={isEurope ? "Destination (Europe)" : "Destination"}
               value={data.destination}
+              readOnly={airportAtDestination}
               required
               onChange={(value) =>
                 update({ target: { name: "destination", value } })
@@ -1167,6 +1240,7 @@ export default function BookingDialog({ open, onClose, initial }) {
                   ...prev,
                   destination: value,
                   destinationPlace: place,
+                  distance: "",
                 }));
                 setError("");
               }}
@@ -1197,6 +1271,16 @@ export default function BookingDialog({ open, onClose, initial }) {
                 required
               />
             </label>
+
+            {isAirportTransfer && data.pickupPlace && data.destinationPlace && (
+              <div className="airport-fare-preview full" role="status">
+                {route.loading ? "Calculating your route…" : route.error ? (
+                  <><span>{route.error}</span><button type="button" onClick={route.retry}>Try again</button></>
+                ) : quote.error ? quote.error : (
+                  <><strong>CHF {formatFare(quote.total)}</strong><span>{quote.breakdown}</span></>
+                )}
+              </div>
+            )}
 
             {error && (
               <p className="form-error full" role="alert">

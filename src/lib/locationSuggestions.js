@@ -4,9 +4,93 @@ const normalize = (text) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
+export const featuredDestinations = [
+  {
+    place_id: "ch-zurich",
+    description: "Zurich, Switzerland",
+    coordinates: [8.5417, 47.3769],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Zurich", secondary_text: "Switzerland" },
+  },
+  {
+    place_id: "ch-lucerne",
+    description: "Lucerne, Switzerland",
+    coordinates: [8.3093, 47.0502],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Lucerne", secondary_text: "Switzerland" },
+  },
+  {
+    place_id: "ch-interlaken",
+    description: "Interlaken, Switzerland",
+    coordinates: [7.8632, 46.6863],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Interlaken", secondary_text: "Switzerland" },
+  },
+  {
+    place_id: "ch-st-moritz",
+    description: "St. Moritz, Switzerland",
+    coordinates: [9.8355, 46.4908],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "St. Moritz", secondary_text: "Switzerland" },
+  },
+  {
+    place_id: "ch-rhine-falls",
+    description: "Rhine Falls, Switzerland",
+    coordinates: [8.5968, 47.6779],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Rhine Falls", secondary_text: "Neuhausen am Rheinfall, Switzerland" },
+  },
+  {
+    place_id: "ch-stein-am-rhein",
+    description: "Stein am Rhein, Switzerland",
+    coordinates: [8.8591, 47.6595],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Stein am Rhein", secondary_text: "Canton of Schaffhausen, Switzerland" },
+  },
+  {
+    place_id: "de-island-mainau",
+    description: "Island Mainau, Germany",
+    coordinates: [9.1986, 47.7065],
+    countryCode: "DE",
+    source: "local",
+    structured_formatting: { main_text: "Island Mainau", secondary_text: "Constance, Germany" },
+  },
+  {
+    place_id: "de-black-forest",
+    description: "Black Forest, Germany",
+    coordinates: [8.2, 48.2],
+    countryCode: "DE",
+    source: "local",
+    structured_formatting: { main_text: "Black Forest", secondary_text: "Germany" },
+  },
+  {
+    place_id: "eu-germany-featured",
+    description: "Germany",
+    coordinates: [10.4515, 51.1657],
+    countryCode: "DE",
+    source: "local",
+    structured_formatting: { main_text: "Germany", secondary_text: "Europe" },
+  },
+  {
+    place_id: "ch-geneva",
+    description: "Geneva, Switzerland",
+    coordinates: [6.1432, 46.2044],
+    countryCode: "CH",
+    source: "local",
+    structured_formatting: { main_text: "Geneva", secondary_text: "Switzerland" },
+  },
+];
+
 export const popularSwissLocations = [
   {
     place_id: "ch-zurich-airport",
+    municipality: "Kloten",
     description: "Zurich Airport (ZRH), Switzerland",
     coordinates: [8.5555, 47.4504],
     countryCode: "CH",
@@ -18,6 +102,7 @@ export const popularSwissLocations = [
   },
   {
     place_id: "ch-zurich-hb",
+    municipality: "Zurich",
     description: "Zurich HB, Bahnhofplatz, Switzerland",
     coordinates: [8.5402, 47.3779],
     countryCode: "CH",
@@ -423,7 +508,9 @@ export function normalizePredictions(predictions) {
 
 export function getSuggestedLocations(query = "", europeMode = false) {
   const search = normalize(query.trim());
-  const pool = europeMode ? popularEuropeCountries : popularSwissLocations;
+  const pool = europeMode
+    ? [...popularEuropeCountries, ...featuredDestinations.filter((loc) => loc.countryCode !== "CH")]
+    : [...popularSwissLocations, ...featuredDestinations.filter((loc) => loc.countryCode === "CH")];
   if (!search) {
     return pool.slice(0, 8);
   }

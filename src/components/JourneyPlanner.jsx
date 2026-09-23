@@ -16,6 +16,7 @@ import FolderFloat from "./shared/FolderFloat.jsx";
 import BorderGlow from "./shared/BorderGlow.jsx";
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete.js";
 import { useDrivingDistance } from "../hooks/useDrivingDistance.js";
+import { getCurrentLocationPlace } from "../lib/openMaps.js";
 
 const bookingHours = [
   "3h",
@@ -53,6 +54,8 @@ export default function JourneyPlanner({ openBooking }) {
   const [pickupPlace, setPickupPlace] = useState(null);
   const [destinationPlace, setDestinationPlace] = useState(null);
   const [formError, setFormError] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const isHourly = hourlyServices.includes(rideType);
   const isKm = kmServices.includes(rideType);
   const isFixed = fixedServices.includes(rideType);
@@ -85,6 +88,7 @@ export default function JourneyPlanner({ openBooking }) {
     setPickup(value);
     setPickupPlace(null);
     setFormError("");
+    setLocationError("");
   };
   const changeDestination = (value) => {
     setDestination(value);
@@ -95,6 +99,21 @@ export default function JourneyPlanner({ openBooking }) {
     setPickup(value);
     setPickupPlace(place);
     setFormError("");
+    setLocationError("");
+  };
+  const useCurrentPickup = async () => {
+    setLocationLoading(true);
+    setLocationError("");
+    try {
+      const place = await getCurrentLocationPlace();
+      setPickup(place.description);
+      setPickupPlace(place);
+      setFormError("");
+    } catch (error) {
+      setLocationError(error.message);
+    } finally {
+      setLocationLoading(false);
+    }
   };
   const selectDestination = (value, place) => {
     setDestination(value);
@@ -234,6 +253,9 @@ export default function JourneyPlanner({ openBooking }) {
               error={pickupPredictions.error}
               empty={pickupPredictions.empty}
               onSelect={selectPickup}
+              onUseCurrentLocation={useCurrentPickup}
+              locationLoading={locationLoading}
+              locationError={locationError}
             />
 
             {/* ── HOURS selector (per hour / wedding) ── */}
